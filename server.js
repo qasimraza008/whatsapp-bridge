@@ -6,7 +6,7 @@ const app = express();
 app.use(express.json());
 
 const clients = {}; // schoolId => client
-const clientStatus = {}; // schoolId => 'disconnected' | 'connecting' | 'connected'
+const clientStatus = {}; // schoolId => 'disconnected' | 'connecting' | 'connected' | 'qr_ready'
 const qrCodes = {}; // schoolId => base64 QR image
 
 app.get('/', (req, res) => {
@@ -29,7 +29,15 @@ app.post('/api/connect', (req, res) => {
         authStrategy: new LocalAuth({ clientId: `school_${schoolId}` }),
         puppeteer: {
             headless: true,
-            args: ['--no-sandbox', '--disable-setuid-sandbox']
+            args: [
+                '--no-sandbox',
+                '--disable-setuid-sandbox',
+                '--disable-dev-shm-usage',
+                '--disable-accelerated-2d-canvas',
+                '--no-first-run',
+                '--no-zygote',
+                '--disable-gpu'
+            ]
         }
     });
 
